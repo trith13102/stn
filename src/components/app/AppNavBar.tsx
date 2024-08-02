@@ -59,16 +59,16 @@ const AppNavBar: FC = () => {
         </section>
 
         <div className="hidden lg:flex items-center gap-x-3">
-          <Button
-            className="w-[2.2rem] h-[2.2rem] !ring-[none] rounded-full"
-            variant="ghost"
-            size="icon"
-            aria-label="Theme Switcher"
-          >
-            <Link href="/settings">
+          <Link href="/settings">
+            <Button
+              className="w-[2.2rem] h-[2.2rem] !ring-[none] rounded-full"
+              variant="ghost"
+              size="icon"
+              aria-label="Theme Switcher"
+            >
               <Settings className="w-[1.2rem] h-[1.2rem] rotate-0 scale-100 transition-all dark:rotate-90" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
