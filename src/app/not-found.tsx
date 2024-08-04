@@ -1,25 +1,22 @@
-"use client"
+import { FC } from "react"
+import type { Metadata } from 'next'
 
-import { FC, useEffect, useState } from "react"
-import { useTheme } from "next-themes"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
-import Error from "next/error"
-import { AppTheme } from "@/core/types"
+import { NOT_FOUND } from "@/constants/meta"
+
+export const metadata: Metadata = NOT_FOUND
 
 const NotFound: FC = () => {
-  const [currentTheme, setCurrentTheme] = useState<AppTheme>("light")
-  const { theme } = useTheme()
-
-  useEffect(() => {
-    setCurrentTheme(theme ? (theme as AppTheme) : "light")
-  }, [])
-
   return (
-    <Error
-      statusCode={404}
-      title="Not Found"
-      withDarkMode={currentTheme === "dark" ? true : false}
-    />
+    <main className="flex flex-col items-center justify-center gap-y-4 h-screen">
+      <p className="text-3xl font-extrabold">404</p>
+      <p className="mb-4 text-xl">Page Not Found!</p>
+      <Button size="default" asChild>
+        <Link href="/">Go Home</Link>
+      </Button>
+    </main>
   )
 }
 
