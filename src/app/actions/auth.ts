@@ -10,8 +10,8 @@ import { DAY_MS } from "@/constants/common"
 const secretKey = process.env.SECRET_KEY
 const key = new TextEncoder().encode(secretKey)
 
-const expireDuration = process.env.EXPIRED_DURATION
-  ? parseInt(process.env.EXPIRED_DURATION)
+const expireDuration = process.env.EXPIRED_PERIOD
+  ? parseInt(process.env.EXPIRED_PERIOD)
   : 15
 
 export const encrypt = async (payload: any): Promise<string> => {
