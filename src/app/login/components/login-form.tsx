@@ -1,7 +1,6 @@
 "use client"
 
 import { FC, useState, useEffect } from "react"
-import { useFormStatus } from 'react-dom'
 import { useTheme } from "next-themes"
 import { z as zod } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,21 +17,25 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 
-import AppLogo from "@/components/app/AppLogo"
+import AppLogo from "@/components/app/app-logo"
 
 import { AppTheme } from "@/core/types"
 
 import { loginFormSchema } from "@/app/login/schemas/login.schema"
 
+import { login } from "@/app/actions/auth"
 
 type Props = {}
 
 const LoginForm: FC<Props> = (props) => {
   const { theme } = useTheme()
   const [currTheme, setCurrTheme] = useState<AppTheme>("light")
-  
-  const { pending: loading } = useFormStatus()
+  const [showPwd, setShowPwd] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const handleShowPwd = (): void => setShowPwd((curr) => !curr)
 
   const form = useForm<zod.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -41,21 +44,6 @@ const LoginForm: FC<Props> = (props) => {
       password: "",
     },
   })
-
-  const handleSubmit = async (
-    values: zod.infer<typeof loginFormSchema>
-  ): Promise<void> => {
-    const data = await fetch("/api/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-
-    const res = await data.json();
-    console.log(res);
-  }
 
   useEffect(() => {
     setCurrTheme(theme as AppTheme)
@@ -72,7 +60,7 @@ const LoginForm: FC<Props> = (props) => {
       <CardContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            action={login}
             className="space-y-6"
           >
             <FormField
@@ -91,7 +79,7 @@ const LoginForm: FC<Props> = (props) => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className={`!ring-[none]${
+                      className={`text-base lg:text-sm !ring-[none]${
                         form.getFieldState("email").error
                           ? "  border-2 border-red-500"
                           : ""
@@ -119,25 +107,59 @@ const LoginForm: FC<Props> = (props) => {
                     Password
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      className={`!ring-[none]${
-                        form.getFieldState("password").error
-                          ? "  border-2 border-red-500"
-                          : ""
-                      }`}
-                      placeholder="Password"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        className={`text-base lg:text-sm !ring-[none]${
+                          form.getFieldState("password").error
+                            ? "  border-2 border-red-500"
+                            : ""
+                        }`}
+                        type={`${showPwd ? "text" : "password"}`}
+                        placeholder="Password"
+                        {...field}
+                      />
+                      <Button
+                        onClick={handleShowPwd}
+                        className="absolute top-0 right-3 flex justify-center p-0 hover:bg-[unset]"
+                        type="button"
+                        variant="ghost"
+                      >
+                        <Eye
+                          className={`w-[1rem] h-[1rem]${
+                            showPwd ? " hidden" : ""
+                          }`}
+                        />
+                        <EyeOff
+                          className={`w-[1rem] h-[1rem]${
+                            showPwd ? "" : " hidden"
+                          }`}
+                        />
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" aria-disabled={loading}>
+            <Button
+              className={`w-full${loading ? " hidden" : ""}`}
+              type="submit"
+            >
               Login
             </Button>
+            <Button
+              className={`w-full${loading ? "" : " hidden"}`}
+              type="submit"
+              disabled
+            >
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
             <div className="text-center">
-              <Link className="text-sm text-blue-500" href="/login/forget-password">
+              <Link
+                className="text-sm text-blue-500"
+                href="/login/forget-password"
+              >
                 Forgot your password?
               </Link>
             </div>
